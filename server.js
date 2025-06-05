@@ -12,6 +12,22 @@ const io = new Server(server, {
 
 io.on('connection', socket => {
   console.log('Жаңа ойыншы:', socket.id);
+
+  const roles = ["Мафия", "Ұстаз", "Оқушы", "Оқушы", "Оқушы"];
+let usedRoles = [];
+
+socket.on('join', (name) => {
+  let assignedRole;
+  if (usedRoles.length >= roles.length) {
+    assignedRole = "Оқушы"; // запас рөл
+  } else {
+    assignedRole = roles[usedRoles.length];
+    usedRoles.push(assignedRole);
+  }
+  console.log(`${name} қосылды. Рөлі: ${assignedRole}`);
+  socket.emit('joined', assignedRole);
+});
+
   socket.on('send-message', msg => io.emit('receive-message', msg));
   socket.on('disconnect', () => console.log('Ойыншы шықты:', socket.id));
 });
